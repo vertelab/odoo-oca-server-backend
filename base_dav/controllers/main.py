@@ -15,6 +15,8 @@ except ImportError:
 
 PREFIX = '/.dav'
 
+_logger = logging.getLogger(__name__)
+
 
 class Main(http.Controller):
     @http.route(
@@ -30,21 +32,16 @@ class Main(http.Controller):
     )
     def handle_dav_request(self, davpath=None):
         config = ConfigParser()
-        for section, values in radicale.config.INITIAL_CONFIG.items():
+        for section, values in radicale.config.DEFAULT_CONFIG_SCHEMA.items():
             config.add_section(section)
             for key, data in values.items():
-                config.set(section, key, data["value"])
+                if isinstance(data, dict) and data.get('value'):
+                    config.set(section, key, data["value"])
         config.set('auth', 'type', 'odoo.addons.base_dav.radicale.auth')
-        config.set(
-            'storage', 'type', 'odoo.addons.base_dav.radicale.collection'
-        )
-        config.set(
-            'rights', 'type', 'odoo.addons.base_dav.radicale.rights'
-        )
+        config.set('storage', 'type', 'odoo.addons.base_dav.radicale.collection')
+        config.set('rights', 'type', 'odoo.addons.base_dav.radicale.rights')
         config.set('web', 'type', 'none')
-        application = radicale.Application(
-            config, logging.getLogger('radicale'),
-        )
+        application = radicale.Application(config)
 
         response = None
 

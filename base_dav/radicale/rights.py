@@ -4,18 +4,16 @@
 from .collection import Collection
 
 try:
-    from radicale.rights import (
-        AuthenticatedRights, OwnerWriteRights, OwnerOnlyRights,
-    )
+    from radicale.rights import authenticated
 except ImportError:
     AuthenticatedRights = OwnerOnlyRights = OwnerWriteRights = None
 
 
-class Rights:
-    def __init__(self, OwnerOnlyRights, OwnerWriteRights, AuthenticatedRights):
-        self.OwnerOnlyRights = OwnerOnlyRights
-        self.OwnerWriteRights = OwnerWriteRights
-        self.AuthenticatedRights = AuthenticatedRights
+class Rights(authenticated.Rights):
+    # def __init__(self, OwnerOnlyRights, OwnerWriteRights, AuthenticatedRights):
+    #     self.OwnerOnlyRights = OwnerOnlyRights
+    #     self.OwnerWriteRights = OwnerWriteRights
+    #     self.AuthenticatedRights = AuthenticatedRights
 
     def authorized(self, user, path, perm):
         if path == '/':
