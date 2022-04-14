@@ -8,15 +8,10 @@ try:
 except ImportError:
     BaseAuth = None
 
-PLUGIN_CONFIG_SCHEMA = {"auth": {
-    "password": {"value": "", "type": str}}}
-
 
 class Auth(BaseAuth):
-    def login(self, login: str, password: str) -> str:
+    def is_authenticated2(self, login, user, password):
         env = request.env
-        uid = request.session.authenticate(env.cr.dbname, login, password)
-        user_id = env['res.users'].browse(uid)
-        if uid:
+        if (uid := request.session.authenticate(env.cr.dbname, user, password)):
             request._env = env(user=uid)
-        return user_id.login
+        return bool(uid)
