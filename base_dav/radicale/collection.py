@@ -130,3 +130,10 @@ class Collection(BaseCollection):
 
     def list(self):
         return self.collection.dav_list(self, self.path_components)
+
+    def sync(self, old_token=None):
+        # TODO: Find out how to implement this correctly
+        token = "http://radicale.org/ns/sync/%s" % self.etag.strip("\"")
+        # if old_token:
+        #     raise ValueError("Sync token are not supported")
+        return token, self.list()

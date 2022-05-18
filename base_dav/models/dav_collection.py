@@ -101,6 +101,8 @@ class DavCollection(models.Model):
         collection_model = self.env[self.model_id.model]
 
         field_name = self.field_uuid.name or "id"
+        if field_name == 'id' and not components[-1].isdigit():
+            return None
         domain = [(field_name, '=', components[-1])] + self._eval_domain()
         return collection_model.search(domain, limit=1)
 
