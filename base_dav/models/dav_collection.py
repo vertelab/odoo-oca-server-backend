@@ -148,7 +148,7 @@ class DavCollection(models.Model):
                 vobj.add(mapping.name).value = value
 
         if 'uid' not in vobj.contents:
-            vobj.add('uid').value = '%s,%s' % (record._name, record.id)
+            vobj.add('uid').value = '%s_%s' % (record._name, record.id)
         if 'rev' not in vobj.contents and 'write_date' in record._fields:
             vobj.add('rev').value = record.write_date.strftime('%Y%m%dT%H%M%SZ')
         return result
