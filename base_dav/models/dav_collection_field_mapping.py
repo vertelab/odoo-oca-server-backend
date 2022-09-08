@@ -3,9 +3,11 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 import datetime
+from json import tool
 
 from odoo import api, fields, models, tools
 from odoo.tools.safe_eval import safe_eval
+from odoo.tools.safe_eval import wrap_module
 
 import dateutil
 import vobject

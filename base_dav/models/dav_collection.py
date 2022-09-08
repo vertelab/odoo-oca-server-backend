@@ -1,4 +1,4 @@
-# Copyright 2019 Therp BV <https://therp.nl>
+# Copyright 2019 Therp BV <https://therp.nl>t_code
 # Copyright 2019-2020 initOS GmbH <https://initos.com>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
@@ -67,7 +67,7 @@ class DavCollection(models.Model):
                 this.tag = 'VADDRESSBOOK'
 
     def _compute_url(self):
-        base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         for this in self:
             this.url = '%s%s/%s/%s' % (
                 base_url,
