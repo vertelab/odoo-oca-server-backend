@@ -7,6 +7,8 @@ from configparser import RawConfigParser as ConfigParser
 import werkzeug
 from odoo import http
 from odoo.http import request
+from odoo.addons.web.controllers.main import ensure_db
+from odoo.exceptions import AccessError
 
 try:
     import radicale
@@ -17,6 +19,29 @@ PREFIX = '/.dav'
 
 
 class Main(http.Controller):
+
+    @http.route('/', type='http', auth="none")
+    def index(self, s_action=None, db=None, **kw):
+        return http.local_redirect('/web', query=request.params, keep_hash=True)
+
+    # ideally, this route should be `auth="user"` but that don't work in non-monodb mode.
+    @http.route('/web', type='http', auth="none")
+    def web_client(self, s_action=None, **kw):
+        ensure_db()
+        if not request.session.uid:
+            return werkzeug.utils.redirect('/web/login', 303)
+        if kw.get('redirect'):
+            return werkzeug.utils.redirect(kw.get('redirect'), 303)
+
+        request.uid = request.session.uid
+        try:
+            context = request.env['ir.http'].webclient_rendering_context()
+            response = request.render('web.webclient_bootstrap', qcontext=context)
+            response.headers['X-Frame-Options'] = 'DENY'
+            return response
+        except AccessError:
+            return werkzeug.utils.redirect('/web/login?error=access')
+
     @http.route(
         ['/.well-known/carddav', '/.well-known/caldav', '/.well-known/webdav'],
         type='http', auth='none', csrf=False,
